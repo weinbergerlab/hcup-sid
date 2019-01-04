@@ -101,7 +101,7 @@ PROC FORMAT;
 *  Data Step                  *;                                                
 *******************************;                                                
 DATA WA_SIDC_2001_AHAL;                                                         
-INFILE 'WA_SIDC_2001_AHAL.ASC' LRECL = 36;                                      
+INFILE 'WA_SID_2001_AHAL.ASC' LRECL = 36;                                      
                                                                                 
 *** Variable attribute ***;                                                     
 ATTRIB                                                                          

@@ -101,7 +101,7 @@ PROC FORMAT;
 *  Data Step                  *;                                                
 *******************************;                                                
 DATA WA_SIDC_2001_CORE;                                                         
-INFILE 'WA_SIDC_2001_CORE.ASC' LRECL = 328;                                     
+INFILE 'WA_SID_2001_CORE.ASC' LRECL = 328;                                     
                                                                                 
 *** Variable attribute ***;                                                     
 ATTRIB                                                                          
