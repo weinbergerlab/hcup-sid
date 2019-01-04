@@ -1,11 +1,28 @@
+/* This is where variables from the SID code and AHAL datasets are recoded into outcome variables and other variables of interest */
+
+/* If you want to make changes here, you need to do the following:
+
+a. Decide which variables from the dataset you need to do your analysis. These can be predictor or outcome variables; and they can be either variables which you analyze directly (without any recoding) or variables you recode before analyzing them.
+b. Write down the complete list of those input variables under recode_input below.
+c. Implement your recoding in the `data` statement of the `recode` macro below. Make sure you update the `keep` line as well, so that the results of your recoding, as well as any other variables from the original data set that you need in your analysis, are output correctly.
+
+Common situations you will encounter here are:
+
+1. Adding a new (predictor or outcome) variable to your analysis, when that variable already exists in the original dataset? Simply add it to `recode_input` and to the `keep` statement.
+2. Adding a new (predictor or outcome) variables to your analysis, and you need to calculate it recoding variables in the original data set? Add variables to be recoded to `recode_input`, add the result of recoding to the `keep` statement, and add code inside `data` to actually produce that result.
+*/
+
+/* This is the list of input variables used by recode */
+%let recode_input=hospst hospstco hfipsstco zip age agemonth ageday died ayear amonth dx1-dx25 cpt1-cpt50;
+
 /* In a single state, 
-   * recode diagnosis fields into respiratory diagnoses we care about
+   * recode diagnosis fields into outcomes we care about
    * recode patient age into age categories
    * recode admission date
 */
 %macro recode(state);
 
-data sid_&state..resp_&state.; set sid_&state..dx_&state.;
+data sid_&state..outcomes_&state.; set sid_&state..dx_&state.;
 	/* Recode ICD-9 diagnoses:
 	   * resp(iratory) = 460-519 (Diseases Of The Respiratory System)
 	   * flu = 487 (Influenza), 488 (Influenza due to certain identified influenza viruses)
@@ -129,7 +146,7 @@ data sid_&state..resp_&state.; set sid_&state..dx_&state.;
 		if CPTS[I] in('87449', '86713', '87278') then leg_test=1; 
 	END;
 	
-	/* recode admission date */
+	/* recode admission date; month 1 = Jan 1901 */
 	amonth = (ayear - 1901) * 12 + amonth;
 	amonthdate = intnx('month', '01DEC1900'd, amonth);
 	format amonthdate date9.;
@@ -178,14 +195,14 @@ data sid_&state..resp_&state.; set sid_&state..dx_&state.;
 		else if agecat1 > 0 then agecat2 = 3;
 	end; 
 	
-	keep hospst hospstco hfipsstco zip
-		age agemonth ageday agecat1 agecat2
-		ayear amonth amonthdate
-		died resp resp_prim 
-		flu flu_prim rsv rsv_prim resp_other resp_otherprim
-		bronchio bronchio_prim
-		pneumo_other pneumo_otherprim pneumopneumo pneumopneumo_prim
-		pneumosept pneumosept_prim
+	keep 
+		hospst hospstco hfipsstco zip 
+		age agemonth ageday agecat1 agecat2 
+		ayear amonth amonthdate 
+		died 
+		resp resp_prim flu flu_prim rsv rsv_prim resp_other resp_otherprim 
+		bronchio bronchio_prim 
+		pneumo_other pneumo_otherprim pneumopneumo pneumopneumo_prim pneumosept pneumosept_prim 
 		leg_test;
 run;
 
