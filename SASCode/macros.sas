@@ -19,7 +19,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 /* Merge in county data from AHA link dataset into core dataset */
 %macro post_import(state, yearstart, yearend);
   data _null_;
-    rc = dlgcdir("../../..");
+    rc = dlgcdir("../..");
   run;
   
   %if &test_mode. %then %let yearend = &yearstart.;
