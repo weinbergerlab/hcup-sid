@@ -1,28 +1,22 @@
-/* This is where variables from the SID code and AHAL datasets are recoded into outcome variables and other variables of interest */
+/* This is where raw variables from the SID code and AHAL datasets are recoded into predictor and outcome variables of interest */
 
-/* If you want to make changes here, you need to do the following:
-
-a. Decide which variables from the dataset you need to do your analysis. These can be predictor or outcome variables; and they can be either variables which you analyze directly (without any recoding) or variables you recode before analyzing them.
-b. Write down the complete list of those input variables under recode_input below.
-c. Implement your recoding in the `data` statement of the `recode` macro below. Make sure you update the `keep` line as well, so that the results of your recoding, as well as any other variables from the original data set that you need in your analysis, are output correctly.
+/* If you want to make changes here, you need to do the implement your recoding in the `data` statement of the `recode_year` macro below. Make sure you update the `keep` line near the bottom as well, so that the results of your recoding (as well as any other variables from the original data set that you need in your analysis) are passed on correctly.
 
 Common situations you will encounter here are:
 
-1. Adding a new (predictor or outcome) variable to your analysis, when that variable already exists in the original dataset? Simply add it to `recode_input` and to the `keep` statement.
-2. Adding a new (predictor or outcome) variables to your analysis, and you need to calculate it recoding variables in the original data set? Add variables to be recoded to `recode_input`, add the result of recoding to the `keep` statement, and add code inside `data` to actually produce that result.
+1. Adding a new (predictor or outcome) variable to your analysis, when that variable already exists in the original dataset? Simply add it to `keep` statement.
+2. Adding a new (predictor or outcome) variables to your analysis, and you need to calculate it by recoding variables in the original data set? Add code inside `data` to do the recoding, and add the name of the resulting variables to the `keep` statement.
 */
-
-/* This is the list of input variables used by recode */
-%let recode_input=hospst hospstco hfipsstco zip age agemonth ageday died ayear amonth dx1-dx25 cpt1-cpt50;
 
 /* In a single state, 
    * recode diagnosis fields into outcomes we care about
    * recode patient age into age categories
    * recode admission date
 */
-%macro recode(state);
+%macro recode_year(state, year);
 
-data sid_&state..outcomes_&state.; set sid_&state..dx_&state.;
+data sid_&state..recoded_&state._&year.; set sid_&state..sid_&state._&year._core;
+
 	/* Recode ICD-9 diagnoses:
 	   * resp(iratory) = 460-519 (Diseases Of The Respiratory System)
 	   * flu = 487 (Influenza), 488 (Influenza due to certain identified influenza viruses)
@@ -147,6 +141,11 @@ data sid_&state..outcomes_&state.; set sid_&state..dx_&state.;
 	END;
 	
 	/* recode admission date; month 1 = Jan 1901 */
+	if missing(ayear) then do;
+		ayear = year;
+		length ayear 3;
+	end;
+
 	amonth = (ayear - 1901) * 12 + amonth;
 	amonthdate = intnx('month', '01DEC1900'd, amonth);
 	format amonthdate date9.;
@@ -195,6 +194,8 @@ data sid_&state..outcomes_&state.; set sid_&state..dx_&state.;
 		else if agecat1 > 0 then agecat2 = 3;
 	end; 
 	
+	label agecat1 = "1=<183 days, 2=183-365 days, 3=1+ year";
+
 	keep 
 		hospst hospstco hfipsstco zip 
 		age agemonth ageday agecat1 agecat2 
@@ -207,4 +208,3 @@ data sid_&state..outcomes_&state.; set sid_&state..dx_&state.;
 run;
 
 %mend;
-

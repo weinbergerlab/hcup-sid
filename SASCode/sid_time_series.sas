@@ -31,31 +31,33 @@ data _null_;
 	rc = dlgcdir("/folders/myshortcuts/HCUP-SID");
 run;
 
-/* Step 4: set up a libname for each state you are working with, following the examples below. Each of these must correspond to a folder on your computer, which you should have set up in step 2 above. */
-
 libname sid_all "SASData/all";
-libname sid_ca "SASData/CA";
-libname sid_nj "SASData/NJ";
-libname sid_ny "SASData/NY";
-libname sid_wa "SASData/WA";
+%include "SASCode/macros.sas";
 
-/* Step 5: if you added any states in step 4, you will also need to edit states.sas. Open it and follow instructions in there. */
+/* Step 6: if you want to change how your predictor and outcome variables are calculated from the raw data, you will need to edit recode.sas. Open it and follow instructions in there. */
 
-%include "SASCode/states.sas";
-
-/* Step 6: if you want to change how outcome variables are calculated, you will need to edit recode.sas. Open it and follow instructions in there. */
+%include "SASCode/recode.sas";
 
 /* Step 7: if you want to change how time series are calculated, you will need to edit aggregate.sas. Open it and follow instructions in there. */
 
-/* Step 8: finally, generate the time series. Add your states of interest, following the example below */
+%include "SASCode/aggregate.sas";
 
-/* %generate_timeseries_ca(); */
-%generate_timeseries_nj();
-/* %generate_timeseries_ny(); */
-/* %generate_timeseries_wa(); */
+/* Step 8: finally, generate the time series. Add your states of interest, following the example below.
+
+If you made changes to recode.sas or aggregate.sas, you may want to test your changes on a subset of the data at first. To do so, change test_mode from 0 to 1, which will cause only the first year of data in each state to be loaded. 
+
+If you have already run this program once to completion (during which time HCUP data was imported into SAS and save in SAS data files), and now just need to re-run the recoding and aggregation, but don't need to re-import HCUP data into SAS, then you can change `skip_import` 0 to 1. This is useful if you are making changes to recode.sas or aggregate.sas and just need to redo everything starting with recoding, but don't need to redo the time-consuming import from HCUP original datasets. */
+
+%let test_mode = 1;
+%let skip_import = 1;
+
+%generate_time_series(ca, 2003, 2011);
+%generate_time_series(nj, 2005, 2014);
+%generate_time_series(ny, 2005, 2014);
+%generate_time_series(wa, 1997, 2014);
 
 /* You don't need to change anything below this point */
 
 /* Merge all states into one output */
-%merge_timeseries();
+%output_time_series();
 
