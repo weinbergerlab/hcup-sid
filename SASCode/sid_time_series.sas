@@ -32,24 +32,17 @@ you need to arrange them into subfolders of HCUPData. In the end, your file stru
 
 filename hcup '/folders/myshortcuts/HCUP-SID';
 
-data _null_;
-  rc = dlgcdir(pathname("hcup"));
-run;
-
-libname sid_all "SASData/all";
-%include "SASCode/macros.sas";
-
-/* Step 6: if you want to change how your predictor and outcome variables are calculated from the raw data, 
+/* Step 4: if you want to change how your predictor and outcome variables are calculated from the raw data, 
 you will need to edit recode.sas. Open it and follow instructions in there. */
 
 %include "SASCode/recode.sas";
 
-/* Step 7: if you want to change how time series are calculated, you will need to edit aggregate.sas. 
+/* Step 5: if you want to change how time series are calculated, you will need to edit aggregate.sas. 
 Open it and follow instructions in there. */
 
 %include "SASCode/aggregate.sas";
 
-/* Step 8: finally, generate the time series. Add your states of interest, following the example below.
+/* Step 6: finally, generate the time series. Add your states of interest, following the example below.
 
 If you made changes to recode.sas or aggregate.sas, you may want to test your changes on a subset of the data at first.
 To do so, change test_mode from 0 to 1, which will cause only the first year of data in each state to be loaded. 

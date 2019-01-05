@@ -118,6 +118,14 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 OPTIONS MPRINT;
 OPTIONS SPOOL;
 
-/* Delete the aggregate time series before appending data to it */
+/* Set up working directory */
+data _null_;
+  rc = dlgcdir(pathname("hcup"));
+run;
+
+/* Set up lib for all-state dataset */
+libname sid_all "SASData/all";
+
+/* Delete the all-state time series (because we'll appending data to it) */
 proc delete data = sid_all.time_series;
 run;
