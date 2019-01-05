@@ -11,7 +11,7 @@ HCUP at https://www.hcup-us.ahrq.gov/db/state/ahalinkage/aha_linkage.jsp
 
 The datasets from HCUP come as compressed and (for non-free ones) password-protected archives. You will need to 
 extract core and AHAL .asc files for each state and year from those archives. After you are done with that, 
-you need to arrange them into subfolders of HCUPData/Unzipped. In the end, your file structure must look like this:
+you need to arrange them into subfolders of HCUPData. In the end, your file structure must look like this:
 
  - top folder
    - SASCode
@@ -22,10 +22,9 @@ you need to arrange them into subfolders of HCUPData/Unzipped. In the end, your 
      - XX (one folder for each state you are working with, XX being the two-letter code for that state)
    - HCUPCode (this contains HCUP load scripts obtained from HCUP, with some minor modifications)
    - HCUPData
-     - Unzipped
-       - XX (one folder for each state you are working with)
-         - XX_SID_YYYY_CORE.asc (the core dataset for state XX, year YY)
-         - XX_SID_YYYY_AHAL.asc (the AHAL dataset for state XX, year YY)
+     - XX (one folder for each state you are working with)
+       - XX_SID_YYYY_CORE.asc (the core dataset for state XX, year YY)
+       - XX_SID_YYYY_AHAL.asc (the AHAL dataset for state XX, year YY)
 */
    
 /* Step 3: you need to tell SAS where your files are located. Edit the following code, replacing 

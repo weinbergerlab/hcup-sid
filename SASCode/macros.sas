@@ -11,7 +11,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   libname sid_&state. "SASData/%upcase(&state.)";
 
   data _null_;
-    rc = dlgcdir("HCUPData/Unzipped/%upcase(&state.)");
+    rc = dlgcdir("HCUPData/%upcase(&state.)");
   run;
 %mend;
 
