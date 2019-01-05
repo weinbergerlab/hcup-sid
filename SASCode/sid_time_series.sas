@@ -60,8 +60,8 @@ HCUP data into SAS, then you can change `skip_import` 0 to 1. This is useful if 
 recode.sas or aggregate.sas and just need to redo everything starting with recoding, but don't need to redo the 
 time-consuming import from HCUP original datasets. */
 
-%let test_mode = 1;
-%let skip_import = 1;
+%let test_mode = 0;
+%let skip_import = 0;
 
 %generate_time_series(ca, 2003, 2011);
 %generate_time_series(nj, 2005, 2014);
