@@ -1,8 +1,8 @@
 /* So you want to extract time series out of state inpatient database (SID)? */
 
-/* Step 1: you need these SAS programs. Obviously, you did that already. */
+/* Step 1: You need these SAS programs. Obviously, you have that already. */
 
-/* Step 2: you need HCUP datasets.
+/* Step 2: You need HCUP datasets.
 
 The datasets you need are SID core and SID AHA linkage (AHAL) datasets from HCUP for states and years of interest. 
 SID core datasets are sold by HCUP; AHAL datasets for years prior to 2006 are included with purchase of 
@@ -27,31 +27,31 @@ you need to arrange them into subfolders of HCUPData. In the end, your file stru
        - XX_SID_YYYY_AHAL.asc (the AHAL dataset for state XX, year YY)
 */
    
-/* Step 3: you need to tell SAS where your files are located. Edit the following code, replacing 
-/folders/myshortcuts/HCUP-SID with the full path to the "top folder" in the diagram above. */
+/* Step 3: You need to tell SAS where your files are located. Edit the following code, replacing 
+/folders/myshortcuts/HCUP-SID with the full path to the "top folder" from the diagram above. */
 
 filename hcup '/folders/myshortcuts/HCUP-SID';
 
-/* Step 4: if you want to change how your predictor and outcome variables are calculated from the raw data, 
+/* Step 4: If you want to change how your predictor and outcome variables are calculated from the raw data, 
 you will need to edit recode.sas. Open it and follow instructions in there. */
 
 %include "SASCode/recode.sas";
 
-/* Step 5: if you want to change how time series are calculated, you will need to edit aggregate.sas. 
+/* Step 5: If you want to change how time series are calculated, you will need to edit aggregate.sas. 
 Open it and follow instructions in there. */
 
 %include "SASCode/aggregate.sas";
 
-/* Step 6: finally, generate the time series. Add your states of interest, following the example below.
+/* Step 6: Finally, generate the time series. Add your states of interest, following the example below.
 
 If you made changes to recode.sas or aggregate.sas, you may want to test your changes on a subset of the data at first.
 To do so, change test_mode from 0 to 1, which will cause only the first year of data in each state to be loaded. 
 
-If you have already run this program once to completion (during which time HCUP data was imported into SAS and 
-saved in SAS data files), and now just need to re-run the recoding and aggregation, but don't need to re-import 
-HCUP data into SAS, then you can change `skip_import` 0 to 1. This is useful if you are making changes to 
-recode.sas or aggregate.sas and just need to redo everything starting with recoding, but don't need to redo the 
-time-consuming import from HCUP original datasets. */
+The first time you run this program to completion, if will import raw HCUP data and save it in SAS datafiles. 
+Subsequently, you can skip the import (which is time-consuming) and go straight to recoding and aggregation. 
+To do that, change `skip_import` from 0 to 1. This is mainly useful when you are making changes to `recode.sas` or 
+`aggregate.sas`. 
+ */
 
 %let test_mode = 0;
 %let skip_import = 0;
