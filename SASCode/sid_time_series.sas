@@ -33,7 +33,7 @@ you need to arrange them into subfolders of HCUPData. In the end, your file stru
 filename hcup '/folders/myshortcuts/HCUP-SID';
 
 data _null_;
-  rc = dlgcdir("/folders/myshortcuts/HCUP-SID");
+  rc = dlgcdir(pathname("hcup"));
 run;
 
 libname sid_all "SASData/all";
