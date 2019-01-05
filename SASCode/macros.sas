@@ -96,7 +96,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   run;
 %mend;
 
-/* Combine all the things above into a single macros that does everything start-to-finish */
+/* Combine all the things above into a single macro that does everything start-to-finish */
 %macro generate_time_series(state, yearstart, yearend);
 
   %pre_import(&state., &yearstart., &yearend.);
@@ -126,6 +126,6 @@ run;
 /* Set up lib for all-state dataset */
 libname sid_all "SASData/all";
 
-/* Delete the all-state time series (because we'll appending data to it) */
+/* Delete the all-state time series (because we'll be appending data to it) */
 proc delete data = sid_all.time_series;
 run;
