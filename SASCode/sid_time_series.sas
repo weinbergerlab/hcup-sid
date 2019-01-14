@@ -36,58 +36,64 @@ data _null_;
   rc = dlgcdir(pathname("hcup"));
 run;
 
-/* Step 4: If you want to change how your predictor and outcome variables are calculated from the raw data, 
-you will need to edit `recode.sas`. You also need to edit `recode.sas` if you are adding
-variables to your analysis, or removing them. Open it and follow instructions in there. */
-
-%include "SASCode/recode.sas";
-
-/* Step 5: If you want to change how time series are calculated, you will need to edit `aggregate.sas`.
-You'll need to do this if you add variables to your analysis (or remove them), or if you want to change
-the summary statistics that go into the time series. Follow instructions in `aggregate.sas`. */
-
-%include "SASCode/aggregate.sas";
-
-/* Step 6: Finally, process the data. 
-
-This takes place in three steps: import (which reads data from HCUP .asc data files into SAS data files),
-recoding (which calculates variables of interest for your analysis from the raw data in HCUP datasets), and
-aggregation (where your variables of interest are aggregated over time). */
-
-/* If you made changes to recode.sas or aggregate.sas, you may want to test your changes on a subset of the data at first.
-To do so, change test_mode from 0 to 1, which will cause only the first year of data in each state to be loaded. */
+/* Step 3.5: If you are making changes to the code in `recode.sas` or `aggregate.sas`, as described below, you 
+may want to test your changes on a subset of the data at first. To do so, change test_mode from 0 to 1, which will
+cause only the first year of data in each state to be processed. */
 
 %let test_mode = 0;
 
-/* Importing: add your states and years of interest following the example below.
+/* Step 4: You need to import HCUP data into SAS. You only need to import data for each year once; it is 
+saved in a SAS data file for future use. If you add more years or states later, you'll need to import those 
+once as well. 
 
-Each year in each state only needs to be imported once. After you import a given year,
-you can take it out of import_sid, as importing each year takes quite a while. */
+Edit the following block to determine which data will be imported; for each state, year range is inclusive */
 
 %import_sid(ca, 2003, 2011);
 %import_sid(nj, 2005, 2014);
 %import_sid(ny, 2005, 2014);
 %import_sid(wa, 1997, 2014);
 
-/* Recoding: add your states and years of interest following the example below.
+/* Step 5: Compute your predictor and outcome variables from raw data. 
 
-Each year in each state only needs to be recoded once when it's first imported
-and then again every time you change `recode.sas`. */
+To change how the predictor and outcome variables are calculated from the raw data, you need to edit `recode.sas`. 
+You also need to edit `recode.sas` if you are adding variables to your analysis, or removing them.
+Open `recode.sas` and follow instructions in there.
+
+You also need to tell SAS which years you want to process. This first time you run this program, these should be
+the same years as the ones you imported; subsequently, you don't need to re-process any years that have already
+been processed, unless you make changes to `recode.sas`, in which case you should re-process all years.
+
+Edit the year ranges below to determine which data will be processed; year range is inclusive. */
+
+%include "SASCode/recode.sas";
 
 %recode(ca, 2003, 2011);
 %recode(nj, 2005, 2014);
 %recode(ny, 2005, 2014);
 %recode(wa, 1997, 2014);
 
-/* Time series generation: add your states and years of interest following the example below.
+/* Step 6: Generate time series
 
-All years you want included in the output must be listed here each time you run the program,
-so you should probably leave this alone except when you add (or remove) years or states. */
+Here, predictor and outcome variables are aggregated by time period. If you need to change which variables
+are aggregated (for example, because you added or removed variables in `recode.sas`) or if you want to change
+the summary statistics that go into the time series, you need to edit `aggregate.sas`. Open `aggregate.sas`
+and follow instructions in there.
+
+Edit the year ranges below to determine which years will be included in the time series. Only the years listed here 
+will appear in the final time series data produced by this program. */
+
+%include "SASCode/aggregate.sas";
 
 %generate_time_series(ca, 2003, 2011);
 %generate_time_series(nj, 2005, 2014);
 %generate_time_series(ny, 2005, 2014);
 %generate_time_series(wa, 1997, 2014);
+
+/* Step 6: Finally, process the data. 
+
+This takes place in three steps: import (which reads data from HCUP .asc data files into SAS data files),
+recoding (which calculates variables of interest for your analysis from the raw data in HCUP datasets), and
+aggregation (where your variables of interest are aggregated over time). */
 
 /* You don't need to change anything below this point */
 
