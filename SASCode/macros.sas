@@ -96,8 +96,8 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   run;
 %mend;
 
-/* Combine all the things above into a single macro that does everything start-to-finish */
-%macro generate_time_series(state, yearstart, yearend);
+/* Top-level macros for processing SID time series */
+%macro import_sid(state, yearstart, yearend);
 
   %pre_import(&state., &yearstart., &yearend.);
 
@@ -107,21 +107,16 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   %end;
 
   %post_import(&state., &yearstart., &yearend.);
+%mend;
 
-  %recode(&state., &yearstart, &yearend);
+%macro generate_time_series(state, yearstart, yearend);
   %merge_years(&state., &yearstart, &yearend);
   %aggregate(&state.);
-
 %mend;
 
 /* Helpful for macro debugging */
-OPTIONS MPRINT;
-OPTIONS SPOOL;
-
-/* Set up working directory */
-data _null_;
-  rc = dlgcdir(pathname("hcup"));
-run;
+* options mprint mlogic symbolgen;
+options spool;
 
 /* Set up lib for all-state dataset */
 libname sid_all "SASData/all";
