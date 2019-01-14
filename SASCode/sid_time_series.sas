@@ -89,12 +89,6 @@ will appear in the final time series data produced by this program. */
 %generate_time_series(ny, 2005, 2014);
 %generate_time_series(wa, 1997, 2014);
 
-/* Step 6: Finally, process the data. 
-
-This takes place in three steps: import (which reads data from HCUP .asc data files into SAS data files),
-recoding (which calculates variables of interest for your analysis from the raw data in HCUP datasets), and
-aggregation (where your variables of interest are aggregated over time). */
-
 /* You don't need to change anything below this point */
 
 /* Merge all states into one output */
