@@ -55,8 +55,8 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 %macro load_sid(state, year);
   /* This sets up the name of the load script for a given state and year. 
   Most have name ending in CORE.sas but a few don't */
-  %if %lowcase(&state.) = "ca" and year = 2009 %then %let name = core_v1;
-  %if %lowcase(&state.) = "hi" and 1996 <= year = 2012 %then %let name = core_v1;
+  %if %lowcase(&state.) = ca and &year. = 2009 %then %let name = core_v1;
+  %else %if %lowcase(&state.) = hi and 1996 <= &year. = 2012 %then %let name = core_v1;
   %else %let name = core;
 
   /* Load core and AHAL */
