@@ -36,6 +36,8 @@ data _null_;
   rc = dlgcdir(pathname("hcup"));
 run;
 
+%include "SASCode/macros.sas";
+
 /* Step 3.5: If you are making changes to the code in `recode.sas` or `aggregate.sas`, as described below, you 
 may want to test your changes on a subset of the data at first. To do so, change test_mode from 0 to 1, which will
 cause only the first year of data in each state to be processed. */
