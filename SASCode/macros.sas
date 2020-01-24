@@ -47,6 +47,23 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
         merge %upcase(&state.)_SIDC_&year._CORE %upcase(&state.)_SIDC_&year._AHAL;
         by dshospid;
       run;
+      
+/* Untested code to merge CHGS data
+
+      proc sort data=sid_&state..sid_&state._&year._core;
+         by link_variable_between_core_and_chgs;
+      run;
+
+      proc sort data=%upcase(&state.)_SIDC_&year._CHGS;
+         by link_variable_between_core_and_chgs;
+      run;
+
+      data sid_&state..sid_&state._&year._core;
+        merge sid_&state..sid_&state._&year._core %upcase(&state.)_SIDC_&year._CHGS;
+        by link_variable_between_core_and_chgs;
+      run;
+*/
+
     %end;
   %end; 
 %mend;
