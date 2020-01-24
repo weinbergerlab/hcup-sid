@@ -50,10 +50,7 @@ once as well.
 
 Edit the following block to determine which data will be imported; for each state, year range is inclusive */
 
-%import_sid(ca, 2003, 2011);
 %import_sid(nj, 2005, 2014);
-%import_sid(ny, 2005, 2014);
-%import_sid(wa, 1997, 2014);
 
 /* Step 5: Compute your predictor and outcome variables from raw data. 
 
@@ -69,10 +66,7 @@ Edit the year ranges below to determine which data will be processed; year range
 
 %include "SASCode/recode.sas";
 
-%recode(ca, 2003, 2011);
 %recode(nj, 2005, 2014);
-%recode(ny, 2005, 2014);
-%recode(wa, 1997, 2014);
 
 /* Step 6: Generate time series
 
