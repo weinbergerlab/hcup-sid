@@ -63,6 +63,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   %if not &skip_import. %then %do;
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._%upcase(&name).sas");
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._AHAL.sas");
+    %include hcup("HCUPCode/%upcase(&state)_SID_&year._CHGS.sas");
   %end;
 %mend;
 
