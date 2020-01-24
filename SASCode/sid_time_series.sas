@@ -4,20 +4,20 @@
 
 /* Step 2: You need HCUP datasets.
 
-The datasets you need are SID core and SID AHA linkage (AHAL) datasets from HCUP for states and years of interest. 
-SID core datasets are sold by HCUP; AHAL datasets for years prior to 2006 are included with purchase of 
-the corresponding core datasets, whereas AHAL datasets for 2006 onward are free downloads from 
-HCUP at https://www.hcup-us.ahrq.gov/db/state/ahalinkage/aha_linkage.jsp
+The datasets you need are SID core, SID AHA linkage (AHAL), and SID charges (CHGS) datasets from HCUP for
+states and years of interest. SID core datasets are sold by HCUP; AHAL datasets for years prior to 2006 are
+included with purchase of the corresponding core datasets, whereas AHAL datasets for 2006 onward are free
+downloads from HCUP at https://www.hcup-us.ahrq.gov/db/state/ahalinkage/aha_linkage.jsp
 
 The datasets from HCUP come as compressed and (for non-free ones) password-protected archives. You will need to 
-extract core and AHAL .asc files for each state and year from those archives. After you are done with that, 
+extract core, AHAL, and CHGS .asc files for each state and year from those archives. After you are done with that, 
 you need to arrange them into subfolders of HCUPData. In the end, your file structure must look like this:
 
  - top folder
    - SASCode
      - sid_time_series.sas (this file)
      - … (other SAS programs)
-   - SASData
+   - SASData (initially empty)
      - all (this folder is where your time series will end up)
      - XX (one folder for each state you are working with, XX being the two-letter code for that state)
    - HCUPCode (this contains HCUP load scripts obtained from HCUP, with some minor modifications)
@@ -25,6 +25,7 @@ you need to arrange them into subfolders of HCUPData. In the end, your file stru
      - XX (one folder for each state you are working with)
        - XX_SID_YYYY_CORE.asc (the core dataset for state XX, year YY)
        - XX_SID_YYYY_AHAL.asc (the AHAL dataset for state XX, year YY)
+       - XX_SID_YYYY_CHGS.asc (the CHGS dataset for state XX, year YY)
 */
    
 /* Step 3: You need to tell SAS where your files are located. Edit the following code, replacing 
@@ -68,20 +69,13 @@ Edit the year ranges below to determine which data will be processed; year range
 
 %recode(nj, 2005, 2014);
 
-/* Step 6: Generate time series
+/* Step 6: Merge data across years
 
-Here, predictor and outcome variables are aggregated by time period. If you need to change which variables
-are aggregated (for example, because you added or removed variables in `recode.sas`) or if you want to change
-the summary statistics that go into the time series, you need to edit `aggregate.sas`. Open `aggregate.sas`
-and follow instructions in there.
+Here, data files are merged across all years (separately for each state).
 
-Edit the year ranges below to determine which years will be included in the time series. Only the years listed here 
-will appear in the final time series data produced by this program. */
+Edit the year ranges below to determine which years will be included in the merged data.  */
 
 %include "SASCode/aggregate.sas";
-
-
-/* You don't need to change anything below this point */
 
 /* Merge all years into one file */
 %merge_years(nj, 2005, 2014);
