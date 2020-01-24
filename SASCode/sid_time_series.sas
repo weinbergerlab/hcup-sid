@@ -80,13 +80,9 @@ will appear in the final time series data produced by this program. */
 
 %include "SASCode/aggregate.sas";
 
-%generate_time_series(ca, 2003, 2011);
-%generate_time_series(nj, 2005, 2014);
-%generate_time_series(ny, 2005, 2014);
-%generate_time_series(wa, 1997, 2014);
 
 /* You don't need to change anything below this point */
 
-/* Merge all states into one output */
-%output_time_series();
+/* Merge all years into one file */
+%merge_years(nj, 2005, 2014);
 
