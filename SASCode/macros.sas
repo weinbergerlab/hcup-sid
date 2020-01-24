@@ -48,21 +48,20 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
         by dshospid;
       run;
       
-/* Untested code to merge CHGS data
-
+/* Untested code to merge CHGS data */
       proc sort data=sid_&state..sid_&state._&year._core;
-         by link_variable_between_core_and_chgs;
+         by key;
       run;
 
       proc sort data=%upcase(&state.)_SIDC_&year._CHGS;
-         by link_variable_between_core_and_chgs;
+         by key;
       run;
 
       data sid_&state..sid_&state._&year._core;
         merge sid_&state..sid_&state._&year._core %upcase(&state.)_SIDC_&year._CHGS;
-        by link_variable_between_core_and_chgs;
+        by key;
       run;
-*/
+/* End of untested code */
 
     %end;
   %end; 
