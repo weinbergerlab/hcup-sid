@@ -216,4 +216,10 @@ data sid_&state..recoded_&state._&year.; set sid_&state..sid_&state._&year._core
     leg_test;
 run;
 
+/* Recode charges dataset */
+data sid_&state..charges_&state._&year.; set %upcase(&state.)_SIDC_&year._CHGS;
+/* Add code here to recode CHGS dataset. Also 'drop' charges not relevant to the analysis and 
+'keep' only those columns that are relevant to subsequent analysis */
+run;
+
 %mend;
