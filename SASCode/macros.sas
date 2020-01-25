@@ -112,7 +112,11 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 
 %macro generate_time_series(state, yearstart, yearend);
   %merge_years(&state., &yearstart, &yearend);
-  %aggregate(&state.);
+  %aggregate_time(&state.);
+%mend;
+
+%macro generate_cost_summary(state, yearstart, yearend);
+  %aggregate_cost(&state., &yearstart, &yearend);
 %mend;
 
 /* Helpful for macro debugging */

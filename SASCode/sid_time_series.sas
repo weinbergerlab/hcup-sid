@@ -69,14 +69,14 @@ Edit the year ranges below to determine which data will be processed; year range
 
 %recode(nj, 2005, 2014);
 
-/* Step 6: Merge data across years
+/* Step 6: Merge cost data 
 
-Here, data files are merged across all years (separately for each state).
+Here, cost data is merged with admissions data (separately for each state).
 
 Edit the year ranges below to determine which years will be included in the merged data.  */
 
 %include "SASCode/aggregate.sas";
 
-/* Merge all years into one file */
-%merge_years(nj, 2005, 2014);
+/* Merge cost data with admissions data */
+%generate_cost_summary(nj, 2005, 2014);
 
