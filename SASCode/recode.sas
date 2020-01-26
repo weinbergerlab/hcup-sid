@@ -20,6 +20,7 @@ the name of the resulting variables to the `keep` statement.
    * recode patient age into age categories
    * recode admission date
 */
+/* Recode core dataset */
 %macro recode_year(state, year);
 
 data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year._core;
@@ -216,9 +217,12 @@ data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year.
 run;
 
 /* Recode charges dataset */
-data sid_&state..charges_&state._&year.; set %upcase(&state.)_SIDC_&year._CHGS;
-/* Add code here to recode CHGS dataset. Also 'drop' charges not relevant to the analysis and 
-'keep' only those columns that are relevant to subsequent analysis */
+data sid_&state..recoded_&state._&year._chgs; set sid_&state..sid_&state._&year._chgs;
+	/* Pre-2009, an admission record can contain up to 35 separate charges, listed in columns chg1-chg35. Starting with 2009, 
+	each charge is listed as a separate row, with the value in the charge column. Here we just combine chg1-chg35 into
+	one column; combining of different rows corresponding to the same admission happens in aggregate.sas */
+	charge = sum(of chg1-chg35, charge);
+	keep key charge;
 run;
 
 %mend;
