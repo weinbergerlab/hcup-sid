@@ -76,12 +76,12 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 %mend;
 
 /* In a single state, merge data across a range of years */
-%macro merge_years(state, yearstart, yearend);
+%macro merge_years(state, yearstart, yearend, dataset);
   %if &test_mode. %then %let yearend = &yearstart.;
-  data sid_&state..recoded_&state.; 
+  data sid_&state..recoded_&state._&dataset.; 
     set 
     %do year=&yearstart %to &yearend;
-      sid_&state..recoded_&state._&year.
+      sid_&state..recoded_&state._&year._&dataset.
     %end;
     ;
   run;
@@ -111,7 +111,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 %mend;
 
 %macro generate_time_series(state, yearstart, yearend);
-  %merge_years(&state., &yearstart, &yearend);
+  %merge_years(&state., &yearstart, &yearend, core);
   %aggregate_time(&state.);
 %mend;
 
