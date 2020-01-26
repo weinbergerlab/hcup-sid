@@ -16,7 +16,6 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 %mend;
 
 /* Switch back to the top directory and write out SAS data file for each year */
-/* Merge in county data from AHA link dataset into core dataset */
 %macro post_import(state, yearstart, yearend);
   data _null_;
     rc = dlgcdir("../..");
@@ -26,6 +25,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 
   %if not &skip_import. %then %do;
     %do year=&yearstart %to &yearend;
+	  /* Merge in county data from AHA link dataset into core dataset */
       proc sort data=%upcase(&state.)_SIDC_&year._CORE;
          by dshospid;
       run;
@@ -47,6 +47,18 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
         merge %upcase(&state.)_SIDC_&year._CORE %upcase(&state.)_SIDC_&year._AHAL;
         by dshospid;
       run;
+
+      /* For CHGS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
+      proc datasets; 
+      	delete sid_&state._&year._chgs;
+      	change %upcase(&state.)_SIDC_&year._CHGS=sid_&state._&year._chgs;
+      run;
+
+      proc datasets;
+      	copy move in=work out=sid_&state.;
+      	select sid_&state._&year._chgs;
+      run;
+      
     %end;
   %end; 
 %mend;
