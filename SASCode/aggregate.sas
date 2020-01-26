@@ -20,7 +20,7 @@ follow the instructions there. */
     class hospst hospstco hfipsstco zip ayear amonth amonthdate agecat1 agecat2;
   run;
   
-  proc append base = sid_all.time_series data = aggregate_&state.;
+  proc append base = sid_all.time_series data = aggregate_&state._core;
   run;
 %mend;
 
