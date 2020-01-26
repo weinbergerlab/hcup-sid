@@ -51,7 +51,7 @@ once as well.
 
 Edit the following block to determine which data will be imported; for each state, year range is inclusive */
 
-%import_sid(nj, 2005, 2014);
+%import_sid(nj, 2006, 2014);
 
 /* Step 5: Compute your predictor and outcome variables from raw data. 
 
@@ -67,7 +67,7 @@ Edit the year ranges below to determine which data will be processed; year range
 
 %include "SASCode/recode.sas";
 
-%recode(nj, 2005, 2014);
+%recode(nj, 2006, 2014);
 
 /* Step 6: Merge cost data 
 
@@ -78,5 +78,5 @@ Edit the year ranges below to determine which years will be included in the merg
 %include "SASCode/aggregate.sas";
 
 /* Merge cost data with admissions data */
-%generate_cost_summary(nj, 2005, 2014);
+%generate_cost_summary(nj, 2006, 2014);
 
