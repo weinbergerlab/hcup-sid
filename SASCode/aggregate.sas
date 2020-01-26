@@ -9,7 +9,7 @@ follow the instructions there. */
 
 /* In a single state, aggregate recoded diagnosis data */
 %macro aggregate_time(state);
-  proc means data=sid_&state..recoded_&state. noprint nway sum missing;
+  proc means data=sid_&state..recoded_&state._core noprint nway sum missing;
     var resp resp_prim flu flu_prim rsv rsv_prim resp_other resp_otherprim 
       pneumo_other pneumo_otherprim pneumopneumo pneumopneumo_prim pneumosept pneumosept_prim
       bronchio bronchio_prim;
