@@ -1,5 +1,3 @@
-%include "SASCode/macros.sas";
-
 /* This is where raw variables from the SID code and AHAL datasets are recoded into
 predictor and outcome variables of interest */
 
