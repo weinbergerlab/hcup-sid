@@ -204,6 +204,7 @@ data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year.
   label agecat1 = "1=<183 days, 2=183-365 days, 3=1+ year";
 
   keep 
+  	key
     hospst hospstco hfipsstco zip 
     age agemonth ageday agecat1 agecat2 
     ayear amonth amonthdate 
