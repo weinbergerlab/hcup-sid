@@ -205,6 +205,7 @@ data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year.
   label agecat1 = "1=<183 days, 2=183-365 days, 3=1+ year";
 
   keep 
+  	key
     hospst hospstco hfipsstco zip 
     age agemonth ageday agecat1 agecat2 
     ayear amonth amonthdate 
@@ -214,5 +215,32 @@ data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year.
     pneumo_other pneumo_otherprim pneumopneumo pneumopneumo_prim pneumosept pneumosept_prim 
     leg_test;
 run;
+
+%if &include_charges. %then %do;
+  /* Recode charges dataset */
+  /* Charges comes in one of two forms: before 2009, each admission (identified by key column) has 1 row and
+  35 columns (chg1-chg35) for 35 possible charges. Other columns contain other information about individual
+  charges. Since 2009, each charge gets its own row (and the key column identifies the corresponding admission). */
+
+  /* First sum up all the charges in chg1-chg35 corresponding to one pre-2009 admission, put the sum in charges, and 
+  drop everything else. */
+  data recoded_&state._&year._chgs; set sid_&state..sid_&state._&year._chgs;
+      /* By including "charge" (which is the since-2009 itemized charge value) in the sum, since-2009 data is retained;
+      those charges will be summed below in proc means */
+    charges = sum(of chg1-chg35, charge); 
+    keep key charges;
+  run;
+
+  /* Then sum up all the rows corresponding to one admission. For a pre-2009 admission, this is a single row
+  that already contains the sum of all charges. */
+  proc means data=recoded_&state._&year._chgs noprint nway sum missing;
+    %let outcome_vars = charges; /* What variables are being summed */
+    var &outcome_vars.; 
+
+    output out=sid_&state..recoded_&state._&year._chgs sum=&outcome_vars.;
+
+    class key; /* Key is unique identifier of an admission */
+  run;
+%end;
 
 %mend;
