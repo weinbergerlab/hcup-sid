@@ -22,9 +22,10 @@ the name of the resulting variables to the `keep` statement.
    * recode patient age into age categories
    * recode admission date
 */
+/* Recode core dataset */
 %macro recode_year(state, year);
 
-data sid_&state..recoded_&state._&year.; set sid_&state..sid_&state._&year._core;
+data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year._core;
 
   /* Recode ICD-9 diagnoses:
      * resp(iratory) = 460-519 (Diseases Of The Respiratory System)
