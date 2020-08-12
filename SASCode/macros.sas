@@ -2,6 +2,10 @@
 Don't change it here, change it in sid_time_series.sas */
 %let test_mode = 0;
 
+/* Hospital charges data adds a lot of time to data processing, so it's turned off by default.
+Don't change it here, changes it in sid_time_series.sas */
+%let include_charges = 0;
+
 /* If skip_import is on, we skip the HCUP asc file -> SAS dataset loading, and assume it's already been done. 
 It's off by default. Don't change it here, change it in sid_time_series.sas */
 %let skip_import = 0;
@@ -16,7 +20,6 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 %mend;
 
 /* Switch back to the top directory and write out SAS data file for each year */
-/* Merge in county data from AHA link dataset into core dataset */
 %macro post_import(state, yearstart, yearend);
   data _null_;
     rc = dlgcdir("../..");
@@ -26,6 +29,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 
   %if not &skip_import. %then %do;
     %do year=&yearstart %to &yearend;
+	  /* Merge in county data from AHA link dataset into core dataset */
       proc sort data=%upcase(&state.)_SIDC_&year._CORE;
          by dshospid;
       run;
@@ -47,11 +51,24 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
         merge %upcase(&state.)_SIDC_&year._CORE %upcase(&state.)_SIDC_&year._AHAL;
         by dshospid;
       run;
+
+      %if &include_charges. %then %do;
+        /* For CHGS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
+        proc datasets; 
+          delete sid_&state._&year._chgs;
+          change %upcase(&state.)_SIDC_&year._CHGS=sid_&state._&year._chgs;
+        run;
+
+        proc datasets;
+          copy move in=work out=sid_&state.;
+          select sid_&state._&year._chgs;
+        run;
+      %end;
     %end;
   %end; 
 %mend;
 
-/* Load core and AHA linkage datasets for state/year */
+/* Load core, AHA linkage, and charges datasets for state/year */
 %macro load_sid(state, year);
   /* This sets up the name of the load script for a given state and year. 
   Most have name ending in CORE.sas but a few don't */
@@ -59,10 +76,13 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   %else %if %lowcase(&state.) = hi and 1996 <= &year. = 2012 %then %let name = core_v1;
   %else %let name = core;
 
-  /* Load core and AHAL */
+  /* Load core, AHAL, CHGS */
   %if not &skip_import. %then %do;
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._%upcase(&name).sas");
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._AHAL.sas");
+    %if &include_charges. %then %do;
+      %include hcup("HCUPCode/%upcase(&state)_SID_&year._CHGS.sas");
+    %end;
   %end;
 %mend;
 
@@ -75,12 +95,12 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 %mend;
 
 /* In a single state, merge data across a range of years */
-%macro merge_years(state, yearstart, yearend);
+%macro merge_years(state, yearstart, yearend, dataset);
   %if &test_mode. %then %let yearend = &yearstart.;
-  data sid_&state..recoded_&state.; 
+  data sid_&state..recoded_&state._&dataset.; 
     set 
     %do year=&yearstart %to &yearend;
-      sid_&state..recoded_&state._&year.
+      sid_&state..recoded_&state._&year._&dataset.
     %end;
     ;
   run;
@@ -110,8 +130,15 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
 %mend;
 
 %macro generate_time_series(state, yearstart, yearend);
-  %merge_years(&state., &yearstart, &yearend);
-  %aggregate(&state.);
+  %merge_years(&state., &yearstart, &yearend, core);
+  %aggregate_time(&state.);
+%mend;
+
+%macro generate_cost_summary(state, yearstart, yearend);
+  %if &test_mode. %then %let yearend = &yearstart.;
+  %do year=&yearstart %to &yearend;
+    %aggregate_cost(&state., &year.);
+  %end;
 %mend;
 
 /* Helpful for macro debugging */
