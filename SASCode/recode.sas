@@ -243,4 +243,29 @@ proc means data=recoded_&state._&year._chgs noprint nway sum missing;
 run;
 %end;
 
+%if &include_utilization. %then %do;
+  /* This is where you should add recoding of utilization variables. For efficiency, keep only the utilization variables
+  that you care about, as well as the 'key' variable (which cross-links utilization data to admissions data) */
+
+  data recoded_&state._&year._dx_pr_grps; set sid_&state..sid_&state._&year._dx_pr_grps;
+    keep key u_icu;
+  run;
+
+/* Merge utilization data into the core data, now that both have been recoded. It's more efficient to first
+reduce both core and utilization data to our variables of interest, and then merge them, than the other way around */
+
+  proc sort data=sid_&state..recoded_&state._&year._core;
+     by key;
+  run;
+
+  proc sort data=sid_&state..recoded_&state._&year._dx_pr_grps;
+     by key;
+  run;
+
+  data sid_&state..recoded_&state._&year._chgs;
+    merge sid_&state..recoded_&state._&year._core sid_&state..recoded_&state._&year._dx_pr_grps;
+    by key;
+  run;
+%end;
+
 %mend;

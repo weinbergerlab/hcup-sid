@@ -53,6 +53,10 @@ By default, data about hospital charges is not loaded, because it adds a lot of 
 
 %let include_charges = 0;
 
+/* Hospital utilization data (https://www.hcup-us.ahrq.gov/toolssoftware/util_flags/utilflag.jsp) is also not loaded by default, because it adds a lot of time to processing. If you will need it in your analysis, change this from 0 to 1: */
+
+%let include_utilization = 0;
+
 /* Edit the following block to determine which state/year data will be imported; for each state, year range is inclusive */
 
 %import_sid(ca, 2009, 2011);

@@ -6,6 +6,10 @@ Don't change it here, change it in sid_time_series.sas */
 Don't change it here, changes it in sid_time_series.sas */
 %let include_charges = 0;
 
+/* Hospital utilization data adds a lot of time to data processing, so it's turned off by default.
+Don't change it here, changes it in sid_time_series.sas */
+%let include_utilization = 0;
+
 /* If skip_import is on, we skip the HCUP asc file -> SAS dataset loading, and assume it's already been done. 
 It's off by default. Don't change it here, change it in sid_time_series.sas */
 %let skip_import = 0;
@@ -64,6 +68,17 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
       	select sid_&state._&year._chgs;
       run;
       
+      %if &include_utilization. %then %do;
+        /* For DX_PR_GRPS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
+        proc datasets; 
+          delete sid_&state._&year._dx_pr_grps;
+          change %upcase(&state.)_SIDC_&year._DX_PR_GRPS=sid_&state._&year._dx_pr_grps;
+        run;
+
+        proc datasets;
+          copy move in=work out=sid_&state.;
+          select sid_&state._&year._dx_pr_grps;
+        run;
       %end;
     %end;
   %end; 
@@ -83,6 +98,9 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._AHAL.sas");
     %if &include_charges. %then %do;
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._CHGS.sas");
+    %end;
+    %if &include_utilization. %then %do;
+    %include hcup("HCUPCode/%upcase(&state)_SID_&year._DX_PR_GRPS.sas");
     %end;
   %end;
 %mend;
