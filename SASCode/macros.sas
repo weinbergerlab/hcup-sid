@@ -64,6 +64,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
       	select sid_&state._&year._chgs;
       run;
       
+      %end;
     %end;
   %end; 
 %mend;
