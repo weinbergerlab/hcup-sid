@@ -53,17 +53,17 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
       run;
 
       %if &include_charges. %then %do;
-        /* For CHGS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
-        proc datasets; 
-          delete sid_&state._&year._chgs;
-          change %upcase(&state.)_SIDC_&year._CHGS=sid_&state._&year._chgs;
-        run;
+      /* For CHGS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
+      proc datasets; 
+      	delete sid_&state._&year._chgs;
+      	change %upcase(&state.)_SIDC_&year._CHGS=sid_&state._&year._chgs;
+      run;
 
-        proc datasets;
-          copy move in=work out=sid_&state.;
-          select sid_&state._&year._chgs;
-        run;
-      %end;
+      proc datasets;
+      	copy move in=work out=sid_&state.;
+      	select sid_&state._&year._chgs;
+      run;
+      
     %end;
   %end; 
 %mend;
@@ -81,7 +81,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._%upcase(&name).sas");
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._AHAL.sas");
     %if &include_charges. %then %do;
-      %include hcup("HCUPCode/%upcase(&state)_SID_&year._CHGS.sas");
+    %include hcup("HCUPCode/%upcase(&state)_SID_&year._CHGS.sas");
     %end;
   %end;
 %mend;

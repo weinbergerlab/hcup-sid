@@ -103,11 +103,13 @@ listed here will appear in the final time series data produced by this program. 
 
 Edit the year ranges below to determine which years will be included in the merged data.  */
 
-%include "SASCode/aggregate.sas";
+%if &include_charges. %then %do;
 
-%generate_cost_summary(ca, 2009, 2011);
-%generate_cost_summary(nj, 2009, 2011);
-%generate_cost_summary(ny, 2009, 2011);
-%generate_cost_summary(wa, 2009, 2011);
+  %generate_cost_summary(ca, 2009, 2011);
+  %generate_cost_summary(nj, 2009, 2011);
+  %generate_cost_summary(ny, 2009, 2011);
+  %generate_cost_summary(wa, 2009, 2011);
+
+%end;
 
 /* Due to its size, cost data is not merged across all states here */
