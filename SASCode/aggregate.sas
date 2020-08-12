@@ -24,3 +24,23 @@ follow the instructions there. */
   run;
 %mend;
 
+/* This is where cost variables of interest, having been recoded, are matched to clinical data about the admission.  */
+
+/* In a single state / year, aggregate recoded cost data */
+%macro aggregate_cost(state, year);
+
+	proc sort data=sid_&state..recoded_&state._&year._core;
+		 by key;
+	run;
+
+	proc sort data=sid_&state..recoded_&state._&year._chgs;
+		 by key;
+	run;
+
+	data sid_&state..aggregate_&state._&year._chgs;
+		merge sid_&state..recoded_&state._&year._core sid_&state..recoded_&state._&year._chgs;
+		by key;
+	run;
+  
+%mend;
+

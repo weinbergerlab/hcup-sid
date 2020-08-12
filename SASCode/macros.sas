@@ -134,6 +134,13 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   %aggregate_time(&state.);
 %mend;
 
+%macro generate_cost_summary(state, yearstart, yearend);
+  %if &test_mode. %then %let yearend = &yearstart.;
+  %do year=&yearstart %to &yearend;
+    %aggregate_cost(&state., &year.);
+  %end;
+%mend;
+
 /* Helpful for macro debugging */
 * options mprint mlogic symbolgen;
 options spool;
