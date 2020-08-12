@@ -216,6 +216,7 @@ data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year.
     leg_test;
 run;
 
+%if &include_charges. %then %do;
 /* Recode charges dataset */
 /* Charges comes in one of two forms: before 2009, each admission (identified by key column) has 1 row and
 35 columns (chg1-chg35) for 35 possible charges. Other columns contain other information about individual
@@ -240,5 +241,6 @@ proc means data=recoded_&state._&year._chgs noprint nway sum missing;
 
   class key; /* Key is unique identifier of an admission */
 run;
+%end;
 
 %mend;

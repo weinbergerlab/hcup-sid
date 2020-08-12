@@ -2,6 +2,10 @@
 Don't change it here, change it in sid_time_series.sas */
 %let test_mode = 0;
 
+/* Hospital charges data adds a lot of time to data processing, so it's turned off by default.
+Don't change it here, changes it in sid_time_series.sas */
+%let include_charges = 0;
+
 /* If skip_import is on, we skip the HCUP asc file -> SAS dataset loading, and assume it's already been done. 
 It's off by default. Don't change it here, change it in sid_time_series.sas */
 %let skip_import = 0;
@@ -48,6 +52,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
         by dshospid;
       run;
 
+      %if &include_charges. %then %do;
       /* For CHGS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
       proc datasets; 
       	delete sid_&state._&year._chgs;
@@ -63,7 +68,7 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   %end; 
 %mend;
 
-/* Load core and AHA linkage datasets for state/year */
+/* Load core, AHA linkage, and charges datasets for state/year */
 %macro load_sid(state, year);
   /* This sets up the name of the load script for a given state and year. 
   Most have name ending in CORE.sas but a few don't */
@@ -71,11 +76,13 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
   %else %if %lowcase(&state.) = hi and 1996 <= &year. = 2012 %then %let name = core_v1;
   %else %let name = core;
 
-  /* Load core and AHAL */
+  /* Load core, AHAL, CHGS */
   %if not &skip_import. %then %do;
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._%upcase(&name).sas");
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._AHAL.sas");
+    %if &include_charges. %then %do;
     %include hcup("HCUPCode/%upcase(&state)_SID_&year._CHGS.sas");
+    %end;
   %end;
 %mend;
 
