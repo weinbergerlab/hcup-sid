@@ -57,17 +57,18 @@ It's off by default. Don't change it here, change it in sid_time_series.sas */
       run;
 
       %if &include_charges. %then %do;
-      /* For CHGS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
-      proc datasets; 
-      	delete sid_&state._&year._chgs;
-      	change %upcase(&state.)_SIDC_&year._CHGS=sid_&state._&year._chgs;
-      run;
+        /* For CHGS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
+        proc datasets; 
+          delete sid_&state._&year._chgs;
+          change %upcase(&state.)_SIDC_&year._CHGS=sid_&state._&year._chgs;
+        run;
 
-      proc datasets;
-      	copy move in=work out=sid_&state.;
-      	select sid_&state._&year._chgs;
-      run;
-      
+        proc datasets;
+          copy move in=work out=sid_&state.;
+          select sid_&state._&year._chgs;
+        run;
+      %end;
+
       %if &include_utilization. %then %do;
         /* For DX_PR_GRPS, there is no merging or other shenanigans to do, so we just rename the dataset and put it in the right place */
         proc datasets; 

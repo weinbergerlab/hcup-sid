@@ -205,7 +205,7 @@ data sid_&state..recoded_&state._&year._core; set sid_&state..sid_&state._&year.
   label agecat1 = "1=<183 days, 2=183-365 days, 3=1+ year";
 
   keep 
-  	key
+    key
     hospst hospstco hfipsstco zip 
     age agemonth ageday agecat1 agecat2 
     ayear amonth amonthdate 
@@ -227,8 +227,8 @@ drop everything else. */
 data recoded_&state._&year._chgs; set sid_&state..sid_&state._&year._chgs;
     /* By including "charge" (which is the since-2009 itemized charge value) in the sum, since-2009 data is retained;
     those charges will be summed below in proc means */
-	charges = sum(of chg1-chg35, charge); 
-	keep key charges;
+  charges = sum(of chg1-chg35, charge); 
+  keep key charges;
 run;
 
 /* Then sum up all the rows corresponding to one admission. For a pre-2009 admission, this is a single row
