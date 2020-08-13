@@ -1,4 +1,4 @@
-/* This is where raw variables from the SID code and AHAL datasets are recoded into
+/* This is where raw variables from the SID core and AHAL datasets are recoded into
 predictor and outcome variables of interest */
 
 /* If you want to make changes here, you need to do the implement your recoding in the `data` statement of 
@@ -14,6 +14,9 @@ the original dataset? Simply add it to the `keep` statement.
 recoding variables in the original data set? Add code inside `data` to do the recoding, and add 
 the name of the resulting variables to the `keep` statement.
 */
+
+/* If you are also working with hospital cost data (CHGS) or hospital utilization data (DX_PR_GRPS), 
+you will probably want to adjust recording of those variables; scroll to the second half of this file */
 
 /* In a single state, 
    * recode diagnosis fields into outcomes we care about
@@ -251,8 +254,8 @@ run;
     keep key u_icu;
   run;
 
-/* Merge utilization data into the core data, now that both have been recoded. It's more efficient to first
-reduce both core and utilization data to our variables of interest, and then merge them, than the other way around */
+/* Merge utilization data into the core data, now that both have been recoded. (It's more efficient to first
+reduce both core and utilization data to our variables of interest, and then merge them, than the other way around.) */
 
   proc sort data=sid_&state..recoded_&state._&year._core;
      by key;
@@ -262,7 +265,6 @@ reduce both core and utilization data to our variables of interest, and then mer
      by key;
   run;
 
-  /* Merge into temp dataset and then move it over because I am not sure if merging A+B into A directly would cause problems */
   data sid_&state..recoded_&state._&year._core;
     merge sid_&state..recoded_&state._&year._core sid_&state..recoded_&state._&year._dx_pr_grps;
     by key;
