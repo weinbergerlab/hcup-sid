@@ -263,15 +263,9 @@ reduce both core and utilization data to our variables of interest, and then mer
   run;
 
   /* Merge into temp dataset and then move it over because I am not sure if merging A+B into A directly would cause problems */
-  data recoded_&state._&year._core;
+  data sid_&state..recoded_&state._&year._core;
     merge sid_&state..recoded_&state._&year._core sid_&state..recoded_&state._&year._dx_pr_grps;
     by key;
-  run;
-
-  proc datasets; 
-    delete sid_&state..recoded_&state._&year._core;
-    copy move in=work out=sid_&state.;
-    select recoded_&state._&year._core;
   run;
 %end;
 
