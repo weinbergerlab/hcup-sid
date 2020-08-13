@@ -10,7 +10,7 @@ follow the instructions there. */
 /* In a single state, aggregate recoded diagnosis data */
 %macro aggregate_time(state);
   proc means data=sid_&state..recoded_&state._core noprint nway sum missing;
-  	%let outcome_vars = resp resp_prim flu flu_prim rsv rsv_prim resp_other resp_otherprim 
+    %let outcome_vars = resp resp_prim flu flu_prim rsv rsv_prim resp_other resp_otherprim 
       pneumo_other pneumo_otherprim pneumopneumo pneumopneumo_prim pneumosept pneumosept_prim
       bronchio bronchio_prim;
   
@@ -29,18 +29,18 @@ follow the instructions there. */
 /* In a single state / year, aggregate recoded cost data */
 %macro aggregate_cost(state, year);
 
-	proc sort data=sid_&state..recoded_&state._&year._core;
-		 by key;
-	run;
+    proc sort data=sid_&state..recoded_&state._&year._core;
+         by key;
+    run;
 
-	proc sort data=sid_&state..recoded_&state._&year._chgs;
-		 by key;
-	run;
+    proc sort data=sid_&state..recoded_&state._&year._chgs;
+         by key;
+    run;
 
-	data sid_&state..aggregate_&state._&year._chgs;
-		merge sid_&state..recoded_&state._&year._core sid_&state..recoded_&state._&year._chgs;
-		by key;
-	run;
+    data sid_&state..aggregate_&state._&year._chgs;
+        merge sid_&state..recoded_&state._&year._core sid_&state..recoded_&state._&year._chgs;
+        by key;
+    run;
   
 %mend;
 
